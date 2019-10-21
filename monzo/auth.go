@@ -5,11 +5,12 @@ import (
 	"log"
 )
 
+// AuthService provides an interface to auth-related endpoints.
 type AuthService struct {
 	Client *Client
 }
 
-// WhoAmI represents a /ping/whoami response.
+// WhoAmI represents the possible fields in a /ping/whoami response body.
 type WhoAmI struct {
 	// Success
 	Authenticated bool   `json:"authenticated"`
