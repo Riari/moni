@@ -2,6 +2,7 @@ package config
 
 import (
 	"log"
+	"os"
 	"path"
 
 	"github.com/riari/moni/util"
@@ -9,14 +10,26 @@ import (
 )
 
 // Initialise sets up config using viper.
-func Initialise() {
+func Initialise() *viper.Viper {
 	home := util.GetUserDir()
+	configFile := "config.yml"
+	configPath := path.Join(home, ".moni")
 
-	viper.SetConfigName("config")
-	viper.SetConfigType("yaml")
-	viper.AddConfigPath(path.Join(home, ".moni"))
-	err := viper.ReadInConfig()
+	if _, err := os.Stat(configPath); os.IsNotExist(err) {
+		os.Mkdir(configPath, os.ModePerm)
+	}
+
+	os.OpenFile(path.Join(configPath, configFile), os.O_RDWR|os.O_CREATE, 0644)
+
+	config := viper.New()
+
+	config.SetConfigType("yaml")
+	config.SetConfigFile(path.Join(configPath, configFile))
+
+	err := config.ReadInConfig()
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	return config
 }

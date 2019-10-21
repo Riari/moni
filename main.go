@@ -9,21 +9,20 @@ import (
 	"github.com/riari/moni/monzo"
 	"github.com/riari/moni/ping"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 func main() {
-	config.Initialise()
+	conf := config.Initialise()
 
 	client := monzo.Client{
 		Client:      http.DefaultClient,
 		BaseURL:     &url.URL{Scheme: "https", Host: "api.monzo.com"},
-		AccessToken: viper.GetString("access_token"),
+		AccessToken: conf.GetString("access_token"),
 	}
 
 	var rootCmd = &cobra.Command{Use: "moni"}
 	rootCmd.AddCommand(account.Command())
-	rootCmd.AddCommand(config.Command())
+	rootCmd.AddCommand(config.Command(conf))
 	rootCmd.AddCommand(ping.Command(client))
 
 	rootCmd.Execute()

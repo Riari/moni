@@ -8,7 +8,7 @@ import (
 )
 
 // Command supplies the config command.
-func Command() *cobra.Command {
+func Command(conf *viper.Viper) *cobra.Command {
 	var command = &cobra.Command{
 		Use:   "config",
 		Short: "Get or set config values",
@@ -20,7 +20,7 @@ func Command() *cobra.Command {
 			Short: "Get a config value by key",
 			Args:  cobra.MinimumNArgs(1),
 			Run: func(cmd *cobra.Command, args []string) {
-				fmt.Print(viper.GetString(args[0]))
+				fmt.Print(conf.GetString(args[0]))
 			},
 		},
 		&cobra.Command{
@@ -28,8 +28,8 @@ func Command() *cobra.Command {
 			Short: "Set a config value by key",
 			Args:  cobra.MinimumNArgs(2),
 			Run: func(cmd *cobra.Command, args []string) {
-				viper.Set(args[0], args[1])
-				viper.WriteConfig()
+				conf.Set(args[0], args[1])
+				conf.WriteConfig()
 				fmt.Printf("Config key %s set to %s", args[0], args[1])
 			},
 		},
