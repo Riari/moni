@@ -1,4 +1,4 @@
-package ping
+package auth
 
 import (
 	"fmt"
@@ -10,16 +10,27 @@ import (
 // Command supplies the ping command.
 func Command(client monzo.Client) *cobra.Command {
 	var command = &cobra.Command{
-		Use:   "ping",
-		Short: "Ping the Monzo API for status info",
+		Use:   "auth",
+		Short: "Authentication commands",
 	}
 
 	command.AddCommand(
 		&cobra.Command{
-			Use:   "whoami",
+			Use:   "status",
 			Short: "Get details of the current authentication",
 			Run: func(cmd *cobra.Command, args []string) {
-				fmt.Print(client.Get("/ping/whoami"))
+				data := client.Auth.GetStatus()
+
+				if data.Error != "" {
+					fmt.Printf("%s: %s", data.Code, data.ErrorDescription)
+					return
+				}
+
+				if data.Authenticated {
+					fmt.Printf("Authenticated as %s", data.UserID)
+				} else {
+					fmt.Print("Unauthenticated")
+				}
 			},
 		},
 	)

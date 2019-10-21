@@ -5,9 +5,9 @@ import (
 	"net/url"
 
 	"github.com/riari/moni/account"
+	"github.com/riari/moni/auth"
 	"github.com/riari/moni/config"
 	"github.com/riari/moni/monzo"
-	"github.com/riari/moni/ping"
 	"github.com/spf13/cobra"
 )
 
@@ -20,10 +20,12 @@ func main() {
 		AccessToken: conf.GetString("access_token"),
 	}
 
+	client.Auth = &monzo.AuthService{Client: &client}
+
 	var rootCmd = &cobra.Command{Use: "moni"}
 	rootCmd.AddCommand(account.Command())
+	rootCmd.AddCommand(auth.Command(client))
 	rootCmd.AddCommand(config.Command(conf))
-	rootCmd.AddCommand(ping.Command(client))
 
 	rootCmd.Execute()
 }

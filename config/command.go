@@ -30,7 +30,7 @@ func Command(conf *viper.Viper) *cobra.Command {
 			Run: func(cmd *cobra.Command, args []string) {
 				conf.Set(args[0], args[1])
 				conf.WriteConfig()
-				fmt.Printf("Config key %s set to %s", args[0], args[1])
+				fmt.Printf("Config key %s set", args[0])
 			},
 		},
 	)

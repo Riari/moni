@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"net/url"
 )
@@ -14,22 +15,25 @@ type Client struct {
 	Client      *http.Client
 	BaseURL     *url.URL
 	AccessToken string
+
+	Auth *AuthService
 }
 
-// Get attempts a GET request to the specified endpoint and returns the response body.
-func (c *Client) Get(endpoint string) (interface{}, error) {
+func (c *Client) get(endpoint string) *http.Response {
 	req, err := c.newRequest("GET", endpoint, nil)
 	if err != nil {
-		return nil, err
+		log.Fatal(err)
 	}
 
-	var body interface{}
-	_, err = c.send(req, &body)
+	response, err := c.send(req)
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	return body, err
+	return response
 }
 
-func (c *Client) newRequest(method, path string, body interface{}) (*http.Request, error) {
+func (c *Client) newRequest(method, path string, body map[string]interface{}) (*http.Request, error) {
 	rel := &url.URL{Path: path}
 	u := c.BaseURL.ResolveReference(rel)
 
@@ -55,14 +59,11 @@ func (c *Client) newRequest(method, path string, body interface{}) (*http.Reques
 	return req, nil
 }
 
-func (c *Client) send(req *http.Request, v interface{}) (*http.Response, error) {
+func (c *Client) send(req *http.Request) (*http.Response, error) {
 	resp, err := c.Client.Do(req)
 	if err != nil {
 		return nil, err
 	}
-
-	defer resp.Body.Close()
-	err = json.NewDecoder(resp.Body).Decode(v)
 
 	return resp, err
 }
