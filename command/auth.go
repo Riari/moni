@@ -1,4 +1,4 @@
-package auth
+package command
 
 import (
 	"fmt"
@@ -7,8 +7,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Command supplies the ping command.
-func Command(client monzo.Client) *cobra.Command {
+// Auth supplies the auth command.
+func Auth(client monzo.Client) *cobra.Command {
 	var command = &cobra.Command{
 		Use:   "auth",
 		Short: "Authentication commands",
